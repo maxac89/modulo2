@@ -3,7 +3,9 @@ package com.example.modulo2.rest;
 import com.example.modulo2.dao.TeacherDAO;
 import com.example.modulo2.entities.Subject;
 import com.example.modulo2.entities.Teacher;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,12 +69,18 @@ public class TeacherRestController {
     }
 
     @GetMapping("/teacher/{id}/subjects")
-    public List<Subject> getSubjectsByTeacher(@PathVariable Integer id) {
+    public Map<String, Object> getTeacherWithSubjects(@PathVariable Integer id) {
         Teacher teacher = teacherDAO.findById(id);
         if (teacher == null) {
             throw new RuntimeException("Teacher id not found - " + id);
         }
 
-        return teacherDAO.findSubjectsByTeacherId(id);
+        List<Subject> subjects = teacherDAO.findSubjectsByTeacherId(id);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("teacher", teacher);
+        response.put("subjects", subjects);
+
+        return response;
     }
 }
