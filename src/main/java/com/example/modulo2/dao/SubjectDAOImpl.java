@@ -6,7 +6,6 @@ import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,14 +34,6 @@ public class SubjectDAOImpl implements SubjectDAO{
         TypedQuery<Subject> theQuery;
         theQuery =
                 entityManager.createQuery("FROM Subject", Subject.class);
-        return theQuery.getResultList();
-    }
-
-    @Override
-    public List<Subject> materias() {
-        TypedQuery<Subject> theQuery = entityManager.createQuery(
-        "SELECT s FROM Subject s JOIN FETCH s.teacher WHERE s.id = :theId", Subject.class);
-        theQuery.setParameter("theId", id);    
         return theQuery.getResultList();
     }
     

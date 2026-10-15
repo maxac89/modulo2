@@ -1,5 +1,6 @@
 package com.example.modulo2.dao;
 
+import com.example.modulo2.entities.Subject;
 import com.example.modulo2.entities.Teacher;
 import java.util.List;
 
@@ -10,5 +11,6 @@ import java.util.List;
         List<Teacher> findAll();
         void update(Teacher theTeacher);
         void delete(Integer id);
+        List<Subject> findSubjectsByTeacherId(Integer id);
     }
 

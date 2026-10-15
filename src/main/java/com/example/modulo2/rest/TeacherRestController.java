@@ -1,6 +1,7 @@
 package com.example.modulo2.rest;
 
 import com.example.modulo2.dao.TeacherDAO;
+import com.example.modulo2.entities.Subject;
 import com.example.modulo2.entities.Teacher;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +57,22 @@ public class TeacherRestController {
 
         return theTeacher;
     }
-    
+
     @DeleteMapping("/teachers/{teacherId}")
     public String deleteTeacher(@PathVariable int teacherId) {
-        
+
         this.teacherDAO.delete(teacherId);
-        
+
         return "Deleted teacherId: " + teacherId;
+    }
+
+    @GetMapping("/teacher/{id}/subjects")
+    public List<Subject> getSubjectsByTeacher(@PathVariable Integer id) {
+        Teacher teacher = teacherDAO.findById(id);
+        if (teacher == null) {
+            throw new RuntimeException("Teacher id not found - " + id);
+        }
+
+        return teacherDAO.findSubjectsByTeacherId(id);
     }
 }
