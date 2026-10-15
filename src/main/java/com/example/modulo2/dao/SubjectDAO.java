@@ -8,6 +8,7 @@ import java.util.List;
         void save(Subject theTeacher);
         Subject findById(Integer id);
         List<Subject> findAll();
+        List<Subject> materias();
         void update(Subject theSubject);
         void delete(Integer id);
     }

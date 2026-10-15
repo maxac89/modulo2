@@ -33,9 +33,11 @@ public class TeacherDAOImpl implements TeacherDAO{
     public List<Teacher> findAll() {
         TypedQuery<Teacher> theQuery;
         theQuery =
-                entityManager.createQuery("FROM Teacher", Teacher.class);
+                entityManager.createQuery("FROM Teacher t LEFT JOIN FETCH t.subjects", Teacher.class);
         return theQuery.getResultList();
     }
+    
+    
     
     @Override
     @Transactional
