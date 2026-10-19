@@ -68,7 +68,7 @@ public class TeacherRestController {
         return "Deleted teacherId: " + teacherId;
     }
 
-    @GetMapping("/teacher/{id}/subjects")
+    @GetMapping("/teachers/{id}/subjects")
     public Map<String, Object> getTeacherWithSubjects(@PathVariable Integer id) {
         Teacher teacher = teacherDAO.findById(id);
         if (teacher == null) {

@@ -68,7 +68,7 @@ public class SubjectRestController {
     }
     
     
-    @GetMapping("/subject/{id}/teacher")
+    @GetMapping("/subjects/{id}/teacher")
     public java.util.Map<String, String> getTeacherNameBySubject(@PathVariable Integer id) {
         Subject subject = subjectDAO.findById(id);
         if (subject == null) {
