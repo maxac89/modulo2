@@ -1,12 +1,12 @@
 # 📚 Sistema Académico - API REST (Módulo 2)
 
-Proyecto colaborativo en parejas desarrollado por Arnau y Max para aprender y aplicar tecnologías de desarrollo backend modernas, control de versiones y persistencia de datos.
+Proyecto colaborativo en parejas desarrollado por Arnau y Max para aprender y aplicar tecnologías de desarrollo backend modernas, control de versiones, seguridad y persistencia de datos.
 
 ---
 
 ## 🛠️ Tecnologías y Herramientas Utilizadas
 * **Lenguaje:** Java
-* **Framework:** Spring Boot
+* **Framework:** Spring Boot & Spring Security
 * **Persistencia:** JPA / Hibernate
 * **Base de Datos:** MySQL Workbench (SQL)
 * **Control de Versiones:** Git y GitHub
@@ -15,40 +15,45 @@ Proyecto colaborativo en parejas desarrollado por Arnau y Max para aprender y ap
 ---
 
 ## 🗄️ Modelo de Base de Datos
-La base de datos se llama `sistema_academico` y consta de dos tablas principales con una relación de **Uno a Muchos (One-to-Many)**:
-* **`teacher` (Profesor):** Contiene la información de los profesores (`id`, `first_name`, `last_name`, `address`).
-* **`subject` (Asignatura):** Contiene la información de las materias (`id`, `name`, `credits`, `lecture_hours`, `teacher_id`). 
+La base de datos se llama `sistema_academico` e incluye el esquema para entidades académicas y tablas para autenticación y autorización:
+* **`teacher` (Profesor):** Datos de los profesores (`id`, `first_name`, `last_name`, `address`).
+* **`subject` (Asignatura):** Datos de las materias (`id`, `name`, `credits`, `lecture_hours`, `teacher_id`).
+* **`users` & `authorities`:** Gestión de usuarios y roles para el control de acceso mediante Spring Security.
 * *Regla de negocio:* Un profesor puede impartir múltiples asignaturas, pero una asignatura solo puede pertenecer a un único profesor.
+
+---
+
+## 🔐 Seguridad y Usuarios
+
+El proyecto utiliza **Spring Security** para asegurar la API mediante autenticación HTTP Basic. Los usuarios precargados en la base de datos son:
+
+| Usuario | Contraseña | Rol | Permisos |
+| :--- | :--- | :--- | :--- |
+| `juan` | 123 | `PROFESOR` | Lectura exclusiva de `/api/subjects/**` |
+| `pedro` | 123 | `DIRECTOR` | Acceso total (CRUD) a `/api/teachers/**` y lectura de `/api/subjects/**` |
+
 ---
 
 ## 🚀 Cómo Usar el Proyecto
 
 ### 1. Configurar la Base de Datos
-En la carpeta `data` del repositorio encontrarás dos scripts SQL para inicializar tu base de datos en MySQL Workbench según prefieras:
-* **`empty_script.sql`**: Crea la base de datos y las tablas completamente vacías para empezar a registrar datos desde cero.
-* **`dummy_script.sql`**: Crea la estructura e incorpora **20 registros de prueba en español** para cada tabla de forma automática.
+En la carpeta `data` encontrarás el archivo **`dummy_script.sql`**. Al ejecutarlo en MySQL Workbench, se creará la estructura completa de la base de datos `sistema_academico`, incluyendo las tablas de datos académicos, las tablas de usuarios y roles (`users` y `authorities`), e insertará datos de prueba iniciales.
 
-### 2. Configurar la Conexión
-Abre el archivo de configuración en tu entorno de desarrollo (`src/main/resources/application.properties`) y asegúrate de que los accesos coincidan con tu servidor local de MySQL:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/sistema_academico?useSSL=false&serverTimezone=UTC
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
-```
-
-### 3. Ejecutar la Aplicación
-1. Ejecuta la clase principal **`Modulo2Application.java`** desde tu IDE (como NetBeans o IntelliJ).
+### 2. Ejecutar la Aplicación
+1. Ejecuta la clase principal **`Modulo2Application.java`** desde tu IDE.
 2. La API se levantará de forma local en el puerto `8080`.
 
-### 4. Realizar Consultas (Endpoints Disponibles)
-Puedes probar las rutas directamente desde tu navegador web habitual o utilizando herramientas de pruebas de API como **Postman**:
+### 3. Realizar Consultas y Probar Seguridad
 
-* **Consultar un profesor y las materias que imparte:**
-  * **URL:** `http://localhost:8080/api/teacher/{id}/subjects`
-  * **Descripción:** Devuelve la información completa del profesor junto con un listado con los nombres de las asignaturas que enseña.
+Para realizar peticiones desde **Postman** o la consola, asegúrate de incluir **Basic Auth** seleccionando el usuario según el tipo de operación:
 
-* **Consultar una materia y su profesor asignado:**
-  * **URL:** `http://localhost:8080/api/subject/{id}/teacher`
-  * **Descripción:** Devuelve los detalles de la asignatura en concreto junto con la información del docente responsable de impartirla.
+* **Peticiones `GET /api/subjects/**`:**
+  * **Permitido para:** Roles `PROFESOR` y `DIRECTOR` (`juan` o `pedro`).
+* **Peticiones `GET /api/teachers/**`:**
+  * **Permitido para:** Rol `DIRECTOR` (`pedro`).
+* **Peticiones `POST`, `PUT`, `DELETE` en `/api/teachers/**`:**
+  * **Permitido para:** Rol `DIRECTOR` (`pedro`).
 
-  ---
+#### Endpoints destacados:
+* **`GET /api/teachers/{id}/subjects`**: Muestra la información del profesor junto con la lista de sus asignaturas (Requiere rol `DIRECTOR`).
+* **`GET /api/subjects/{id}/teacher`**: Muestra la asignatura y el profesor que la imparte (Requiere rol `PROFESOR` o `DIRECTOR`).
